@@ -1,4 +1,3 @@
-// loading required modules
 const { format } = require("date-fns");
 const fs = require("fs");
 const fsPromises = require("fs").promises;
@@ -10,35 +9,36 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 // creating time stamp for file
-const currentDateStamp = `Date-${format(
+const currentDateTimeStamp = `Date-${format(
   new Date(),
   "dd-MMM-yyyy"
 )}\t Time-${format(new Date(), "HH:mm:ss")}`;
-
+console.log(currentDateTimeStamp);
 //creating variable file to store text file
-let textFileInFolder = [];
+let textFile = [];
 
 // creating function for loading folder & files
-const logEvents = async (currentDateStamp) => {
-  const dateTime = `${format(new Date(), "dd-MMM-yyyy")}_time_${format(
+const logEvents = async (currentDateTimeStamp) => {
+  const dateTime = `${format(new Date(), "dd-MMM-yyyy")}_T_${format(
     new Date(),
     "HH-mm-ss"
   )}`;
+  //creating folder
   try {
-    if (!fs.existsSync(path.join(__dirname, "logs"))) {
-      await fsPromises.mkdir(path.join(__dirname, "logs"));
+    if (!fs.existsSync(path.join(__dirname, "histroy"))) {
+      await fsPromises.mkdir(path.join(__dirname, "histroy"));
     }
     await fsPromises.writeFile(
-      path.join(__dirname, "logs", `${dateTime}.txt`),
-      currentDateStamp
+      path.join(__dirname, "histroy", `${dateTime}.txt`),
+      currentDateTimeStamp
     );
-    fs.readdir(path.join(__dirname, "logs"), (err, files) => {
+    fs.readdir(path.join(__dirname, "histroy"), (err, files) => {
       if (err) {
         console.error(err);
       }
       files.forEach((file) => {
         if (path.extname(file, path.basename(file)) == ".txt") {
-          textFileInFolder.push(file);
+          textFile.push(file);
         }
       });
     });
@@ -47,15 +47,13 @@ const logEvents = async (currentDateStamp) => {
   }
 };
 
-//calling function for creating folder & file with time stamp
-logEvents(currentDateStamp);
+
+logEvents(currentDateTimeStamp);
 
 //creating endpoint
 app.get("/", function (req, res) {
-  res.send(textFileInFolder);
+  res.send(textFile);
 });
 
 //creating local server for listening on port 3000
-
 app.listen(3000);
-

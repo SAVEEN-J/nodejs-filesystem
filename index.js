@@ -51,9 +51,14 @@ const logEvents = async (currentDateTimeStamp) => {
 logEvents(currentDateTimeStamp);
 
 //creating endpoint
-app.get("/", function (req, res) {
-  res.send(textFile);
+app.get("/", function (request, responce) {
+  // responce.writeHead(200,{'Content-Type':'text/html'})
+  // responce.write('<b>Current TimeStamp<b>');
+  responce.send(textFile);
+ 
 });
-
-//creating local server for listening on port 3000
-app.listen(3000);
+// local server creating
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
